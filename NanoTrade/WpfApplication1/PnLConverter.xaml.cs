@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using PnLConverter.service;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,11 @@ namespace PnLConverter
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
-                txtEditor.Text = File.ReadAllText(openFileDialog.FileName);
+            {
+                //txtEditor.Text = File.ReadAllText(openFileDialog.FileName);
+                IRawRecordExtractor extractor = new HaitongRawRecordExtractor();
+                extractor.extractRawRecord(openFileDialog.FileName);
+            }
         }
     }
 }

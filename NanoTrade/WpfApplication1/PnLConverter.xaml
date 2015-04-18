@@ -7,7 +7,24 @@
 
         <TextBox Name="txtEditor" />
         <Grid>
-
+            <Grid.RowDefinitions>
+                <RowDefinition Height="272*"/>
+                <RowDefinition Height="71*"/>
+            </Grid.RowDefinitions>
+            <Button Content="生成业绩单" 
+        Name="btnsync" Grid.Row="1"
+        FontSize="20" FontFamily="Times New Roman"
+         />
+            <DataGrid Name="dgEmp" AutoGenerateColumns="False" ColumnWidth="*"
+           >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="买入股数" Binding="{Binding buyShares}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="买入价格" Binding="{Binding buyPrice}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="代码" Binding="{Binding ticker}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="卖出股数" Binding="{Binding sellShares}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="卖出价格" Binding="{Binding sellPrice}"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
     </StackPanel>
 </Window>

@@ -1,0 +1,13 @@
+﻿<Window x:Class="PnLConverter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PnLConverter" Height="350" Width="525">
+    <StackPanel>
+        <Button Name="btnOpenFile" Click="btnOpenFile_Click">Open file</Button>
+
+        <TextBox Name="txtEditor" />
+        <Grid>
+
+        </Grid>
+    </StackPanel>
+</Window>

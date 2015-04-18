@@ -68,9 +68,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="model\Market.cs" />
     <Compile Include="service\BaseRecordExtractor.cs" />
     <Compile Include="service\HaitongRawRecordExtractor.cs" />
     <Compile Include="service\IRawRecordExtractor.cs" />
+    <Compile Include="service\PerfSheetWriter.cs" />
     <Page Include="PnLConverter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

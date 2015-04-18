@@ -10,8 +10,8 @@ namespace PnLConverter.service
 {
     class HaitongRawRecordExtractor : IRawRecordExtractor
     {
-        private const String BUY_FLAG = "买";
-        private const String LENDSELL_FLAG = "融券卖出";
+        private static readonly String BUY_FLAG = "买";
+        private static readonly String LENDSELL_FLAG = "融券卖出";
 
         public List<TradePair> extractRawRecord(string filePath)
         {

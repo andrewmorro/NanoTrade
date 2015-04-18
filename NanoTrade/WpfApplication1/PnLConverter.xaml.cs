@@ -39,10 +39,8 @@ namespace PnLConverter
                 IRawRecordExtractor extractor = new HaitongRawRecordExtractor();
                 List<TradePair> tradePairList = extractor.extractRawRecord(openFileDialog.FileName);
 
-                foreach (TradePair pair in tradePairList)
-                {
-                    Console.WriteLine(pair);
-                }
+                PerfSheetWriter writer = new PerfSheetWriter();
+                writer.writePerf(tradePairList,"");
             }
         }
     }

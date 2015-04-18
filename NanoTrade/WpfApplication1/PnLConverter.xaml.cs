@@ -16,6 +16,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using PnLConverter.model;
+
 namespace PnLConverter
 {
     /// <summary>
@@ -35,7 +37,12 @@ namespace PnLConverter
             {
                 //txtEditor.Text = File.ReadAllText(openFileDialog.FileName);
                 IRawRecordExtractor extractor = new HaitongRawRecordExtractor();
-                extractor.extractRawRecord(openFileDialog.FileName);
+                List<TradePair> tradePairList = extractor.extractRawRecord(openFileDialog.FileName);
+
+                foreach (TradePair pair in tradePairList)
+                {
+                    Console.WriteLine(pair);
+                }
             }
         }
     }

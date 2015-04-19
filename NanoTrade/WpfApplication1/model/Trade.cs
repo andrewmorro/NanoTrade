@@ -15,7 +15,7 @@ namespace PnLConverter.model
     {
         private string _ticker = "";
         private int _shares = 0;
-        private float _price = 0;
+        private double _price = 0;
         private TradeType _type = TradeType.UNKNOWN;
 
         public Trade()
@@ -23,7 +23,7 @@ namespace PnLConverter.model
 
         }
 
-        public Trade(string ticker, int shares, float price, TradeType type)
+        public Trade(string ticker, int shares, double price, TradeType type)
         {
             this._ticker = ticker;
             this._shares = shares;
@@ -55,7 +55,7 @@ namespace PnLConverter.model
             }
         }
 
-        public float price
+        public double price
         {
             get
             {

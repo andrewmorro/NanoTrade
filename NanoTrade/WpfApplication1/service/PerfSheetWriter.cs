@@ -1,7 +1,10 @@
-﻿using PnLConverter.model;
+﻿using Microsoft.Office.Interop.Excel;
+using PnLConverter.model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,34 +16,78 @@ namespace PnLConverter.service
         private static readonly string SHANGHAI_PREFIX = "60";
         private static readonly string SHENZHEN_PREFIX = "00";
 
-        private Dictionary<Market,SheetIndex> index =  new Dictionary<Market, SheetIndex>{{Market.SHANGHAI,new SheetIndex(Market.SHANGHAI)},{Market.SHENZHEN,new SheetIndex(Market.SHENZHEN)}};
-
-        public PerfSheetWriter()
-        {
-
-        }
+        private Dictionary<Market, SheetIndex> index = new Dictionary<Market, SheetIndex> { { Market.SHANGHAI, new SheetIndex(Market.SHANGHAI) }, { Market.SHENZHEN, new SheetIndex(Market.SHENZHEN) } };
 
         public PerfSheetWriter(string templatePath)
-            : this()
         {
             this.templatePath = templatePath;
         }
 
         public void writePerf(List<TradePair> tradePairList, string path)
         {
-            foreach(TradePair pair in tradePairList){
-                if (pair.paired)
+            //path = @"C:\Users\迪\Desktop\output.xls";
+            Application app = null;
+            Workbook workbook = null;
+            Worksheet sheet = null;
+            try
+            {
+                //Copy file
+                File.Copy(templatePath, path, true);
+
+                //open book
+                app = new Microsoft.Office.Interop.Excel.Application();
+                workbook = app.Workbooks.Open(path, 0, false, 5, "", "", false, XlPlatform.xlWindows, "", true, false, 0, true, false, false);
+                sheet = (Worksheet)workbook.Worksheets.get_Item(1);
+
+                Range range = sheet.get_Range("B4", "Z27");
+                double[,] cache = this.writeTradeListToCache(tradePairList);
+                range.Value = cache;
+                workbook.Save();
+            }
+            catch (IOException e)
+            {
+                throw e;
+            }
+            finally
+            {
+                if (sheet != null)
+                    Marshal.ReleaseComObject(sheet);
+                if (workbook != null)
                 {
-                    this.writeItem(pair);
+                    workbook.Close();
+                    Marshal.ReleaseComObject(workbook);
+                }
+                if (app != null)
+                {
+                    app.Quit();
+                    Marshal.ReleaseComObject(app);
+                    app = null;
                 }
             }
         }
 
-        private void writeItem(TradePair pair)
+        private double[,] writeTradeListToCache(List<TradePair> tradePairList)
         {
-            Market market = getMarketByTicker(pair);
-            Console.WriteLine("Write {2} to grid {0}{1}", index[market].currentCol, index[market].currentRow, pair.ticker);
-            index[market].moveToNext();
+            double[,] data = new double[24, 25];
+            foreach (TradePair pair in tradePairList)
+            {
+                if (pair.paired)
+                {
+                    Market market = getMarketByTicker(pair);
+                    if (!index[market].hasSpace)
+                    {
+                        continue;
+                    }
+                    data[index[market].currentRow, index[market].currentCol] = pair.buyTrade.shares;
+                    data[index[market].currentRow, index[market].currentCol + 1] = Math.Round(pair.buyTrade.price,3);
+                    data[index[market].currentRow, index[market].currentCol + 2] = Convert.ToSingle(pair.ticker);
+                    data[index[market].currentRow, index[market].currentCol + 3] = pair.lendSellTrade.shares;
+                    data[index[market].currentRow, index[market].currentCol + 4] = Math.Round(pair.lendSellTrade.price,3);
+                    Console.WriteLine("Write {2} to grid {0}{1}", index[market].currentCol, index[market].currentRow, pair.ticker);
+                    index[market].moveToNext();
+                }
+            }
+            return data;
         }
 
         private Market getMarketByTicker(TradePair pair)
@@ -66,20 +113,19 @@ namespace PnLConverter.service
 
         private class SheetIndex
         {
+            private static readonly int MAX_ROW = 24;
+            private static readonly Dictionary<Market, int> MAX_COL = new Dictionary<Market, int> { { Market.SHANGHAI, 3 }, { Market.SHENZHEN, 2 } };
 
-            private static readonly int ROW_BEGIN = 4;
-            private static readonly int ROW_END = 27;
-            private static readonly char[] COL_SHANGHAI = { 'B', 'G', 'L' };
-            private static readonly char[] COL_SHENZHEN = { 'Q', 'V' };
-            private static readonly Dictionary<Market, char[]> COLUMNS = new Dictionary<Market, char[]> { { Market.SHANGHAI, COL_SHANGHAI }, { Market.SHENZHEN, COL_SHENZHEN } };
-
-            private int _currentRow = ROW_BEGIN;
+            private int _currentRow = 0;
             private int _currentCol = 0;
             private Market market = Market.SHANGHAI;
 
             public SheetIndex(Market market)
             {
                 this.market = market;
+                this.hasSpace = true;
+                this._currentCol = 0;
+                this._currentRow = 0;
             }
 
             public int currentRow
@@ -89,22 +135,34 @@ namespace PnLConverter.service
                     return this._currentRow;
                 }
             }
-            public char currentCol
+            public int currentCol
             {
                 get
                 {
-                    return COLUMNS[this.market][this._currentCol];
+                    if (market == Market.SHANGHAI)
+                    {
+                        return this._currentCol * 5;
+                    }
+                    else
+                    {
+                        return (this._currentCol + 3) * 5;
+                    }
                 }
             }
 
+            public bool hasSpace { get; set; }
+
             public void moveToNext()
             {
-                if (++_currentRow > ROW_END)
+                //Move to next row
+                if (++_currentRow >= MAX_ROW)
                 {
-                    _currentRow = ROW_BEGIN;
-                    if (++_currentCol >= COLUMNS[this.market].Length)
+                    //If exceeds row bound, reset to 0 and move to next column
+                    _currentRow = 0;
+                    if (++_currentCol >= MAX_COL[this.market])
                     {
-                        throw new Exception("There's not enough space for performance record.");
+                        Console.WriteLine("There's not enough space for performance record.");
+                        this.hasSpace = false;
                     }
                 }
             }

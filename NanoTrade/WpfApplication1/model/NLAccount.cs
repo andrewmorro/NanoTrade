@@ -8,6 +8,6 @@ namespace PnLConverter.model
 {
     public enum NLAccount
     {
-        XIAOCHAJI, HAITONG
+        XIAOCHAJI, HAITONG,UNKNOWN
     }
 }

@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using PnLConverter.model;
+using System.ComponentModel;
 
 namespace PnLConverter
 {
@@ -67,7 +68,7 @@ namespace PnLConverter
                     MessageBox.Show("Done!");
                 }
 
-               
+
             }
             catch (IOException ex)
             {
@@ -77,17 +78,65 @@ namespace PnLConverter
 
         public PnLConverterViewModel viewModel { get; set; }
 
-        
+
     }
 
-    public class PnLConverterViewModel
+    public class PnLConverterViewModel : INotifyPropertyChanged
     {
+        private string _fileName = "";
+        private List<TradePair> _tradePairList = null;
+        private NLAccount _selectedAccount = NLAccount.UNKNOWN;
+
         public PnLConverterViewModel() { }
 
-        public string fileName { get; set; }
+        public string fileName
+        {
+            get
+            {
+                return this._fileName;
+            }
+            set
+            {
+                this._fileName = value;
+                OnPropertyChanged("fileName");
+            }
+        }
 
-        public List<TradePair> tradePairList { get; set; }
+        public List<TradePair> tradePairList
+        {
+            get
+            {
+                return this._tradePairList;
+            }
+            set
+            {
+                this._tradePairList = value;
+                OnPropertyChanged("tradePairList");
+            }
+        }
 
-        public NLAccount selectedAccount { get; set; }
+        public NLAccount selectedAccount
+        {
+            get
+            {
+                return this._selectedAccount;
+            }
+            set
+            {
+                this._selectedAccount = value;
+                OnPropertyChanged("selectedAccount");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string name)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+            }
+
+        }
     }
 }

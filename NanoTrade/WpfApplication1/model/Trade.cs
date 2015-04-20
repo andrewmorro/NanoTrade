@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace PnLConverter.model
 {
-    enum TradeType
+    public enum TradeType
     {
         BUY, SELL, LVRGBUY, LENDSELL, UNKNOWN
     }
 
-    class Trade
+    public class Trade
     {
         private string _ticker = "";
         private int _shares = 0;

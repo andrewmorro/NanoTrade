@@ -15,6 +15,7 @@ namespace PnLConverter.service
 
         private static readonly string SHANGHAI_PREFIX = "60";
         private static readonly string SHENZHEN_PREFIX = "00";
+        private static readonly string CHUANGYE_PREFIX = "30";
 
         private Dictionary<Market, SheetIndex> index = new Dictionary<Market, SheetIndex> { { Market.SHANGHAI, new SheetIndex(Market.SHANGHAI) }, { Market.SHENZHEN, new SheetIndex(Market.SHENZHEN) } };
 
@@ -96,7 +97,7 @@ namespace PnLConverter.service
             {
                 return Market.SHANGHAI;
             }
-            else if (pair.ticker.StartsWith(SHENZHEN_PREFIX))
+            else if (pair.ticker.StartsWith(SHENZHEN_PREFIX)||pair.ticker.StartsWith(CHUANGYE_PREFIX))
             {
                 return Market.SHENZHEN;
             }

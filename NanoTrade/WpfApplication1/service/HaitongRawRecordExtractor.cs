@@ -15,40 +15,44 @@ namespace PnLConverter.service
 
         public List<TradePair> extractRawRecord(string filePath)
         {
-            FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-            Dictionary<String, TradePair> dict = new Dictionary<string, TradePair>();
-
-            using (StreamReader r = new StreamReader(file, Encoding.GetEncoding("gb2312")))
+            using (FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
-                // skip the first header line
-                string line = r.ReadLine();
-                while ((line = r.ReadLine()) != null)
-                {
-                    String[] tokens = String.Copy(line).Split('\t');
-                    string ticker = tokens[1];
-                    TradePair pair = null;
-                    if (!dict.ContainsKey(ticker))
-                    {
-                        pair = new TradePair();
-                        pair.ticker = ticker;
-                        dict[ticker] = pair;
-                    }
-                    pair = dict[ticker];
+                Dictionary<String, TradePair> dict = new Dictionary<string, TradePair>();
 
-                    Trade trade = new Trade(ticker, Convert.ToInt32(tokens[4]), Convert.ToSingle(tokens[5]), TradeType.UNKNOWN);
-                    if (BUY_FLAG.Equals(tokens[3]))
+                using (StreamReader reader = new StreamReader(file, Encoding.GetEncoding("gb2312")))
+                {
+                    // skip the first header line
+                    string line = reader.ReadLine();
+                    while ((line = reader.ReadLine()) != null)
                     {
-                        trade.type = TradeType.BUY;
-                        pair.buyTrade = trade;
+                        String[] tokens = String.Copy(line).Split('\t');
+                        string ticker = tokens[1];
+                        TradePair pair = null;
+                        if (!dict.ContainsKey(ticker))
+                        {
+                            pair = new TradePair();
+                            pair.ticker = ticker;
+                            dict[ticker] = pair;
+                        }
+                        pair = dict[ticker];
+
+                        Trade trade = new Trade(ticker, Convert.ToInt32(tokens[4]), Convert.ToSingle(tokens[5]), TradeType.UNKNOWN);
+                        if (BUY_FLAG.Equals(tokens[3]))
+                        {
+                            trade.type = TradeType.BUY;
+                            pair.buyTrade = trade;
+                        }
+                        else if (LENDSELL_FLAG.Equals(tokens[10]))
+                        {
+                            trade.type = TradeType.LENDSELL;
+                            pair.lendSellTrade = trade;
+                        }
                     }
-                    else if (LENDSELL_FLAG.Equals(tokens[10]))
-                    {
-                        trade.type = TradeType.LENDSELL;
-                        pair.lendSellTrade = trade;
-                    }
+                    reader.Close();
                 }
+                file.Close();
+                return dict.Values.ToList();
             }
-            return dict.Values.ToList();
         }
     }
 }

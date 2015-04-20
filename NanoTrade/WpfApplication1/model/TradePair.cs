@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PnLConverter.model
 {
-    class TradePair
+    public class TradePair
     {
         public string ticker { get; set; }
         public Trade buyTrade { get; set; }

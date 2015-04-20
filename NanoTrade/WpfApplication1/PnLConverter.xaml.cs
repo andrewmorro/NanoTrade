@@ -29,7 +29,9 @@ namespace PnLConverter
         public MainWindow()
         {
             //base.InitializeComponent();
-            this.selectedAccount = NLAccount.XIAOCHAJI;
+            this.viewModel = new PnLConverterViewModel();
+            this.DataContext = this.viewModel;
+            this.viewModel.selectedAccount = NLAccount.HAITONG;
         }
 
         private void btnOpenFile_Click(object sender, RoutedEventArgs e)
@@ -37,17 +39,9 @@ namespace PnLConverter
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
-                fileName = openFileDialog.FileName;
-                this.textFilePath.Text = fileName;
-            }
-        }
-
-        private void btnOpenTemplate_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-            {
-                templateName = openFileDialog.FileName;
+                this.viewModel.fileName = openFileDialog.FileName;
+                IRawRecordExtractor extractor = new HaitongRawRecordExtractor();
+                this.viewModel.tradePairList = extractor.extractRawRecord(this.viewModel.fileName);
             }
         }
 
@@ -67,11 +61,9 @@ namespace PnLConverter
                 if (result == true)
                 {
                     // Save document
-                    string filename = dlg.FileName;
-                    IRawRecordExtractor extractor = new HaitongRawRecordExtractor();
-                    List<TradePair> tradePairList = extractor.extractRawRecord(fileName);
-                    PerfSheetWriter writer = new PerfSheetWriter(TemplateManager.getTemplate(selectedAccount));
-                    writer.writePerf(tradePairList, filename);
+                    string outputFile = dlg.FileName;
+                    PerfSheetWriter writer = new PerfSheetWriter(TemplateManager.getTemplate(this.viewModel.selectedAccount));
+                    writer.writePerf(this.viewModel.tradePairList, outputFile);
                     MessageBox.Show("Done!");
                 }
 
@@ -83,7 +75,18 @@ namespace PnLConverter
             }
         }
 
+        public PnLConverterViewModel viewModel { get; set; }
+
+        
+    }
+
+    public class PnLConverterViewModel
+    {
+        public PnLConverterViewModel() { }
+
         public string fileName { get; set; }
+
+        public List<TradePair> tradePairList { get; set; }
 
         public NLAccount selectedAccount { get; set; }
     }

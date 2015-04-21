@@ -41,7 +41,7 @@ namespace PnLConverter.service
                 sheet = (Worksheet)workbook.Worksheets.get_Item(1);
 
                 Range range = sheet.get_Range("B4", "Z27");
-                double[,] cache = this.writeTradeListToCache(tradePairList);
+                object[,] cache = this.writeTradeListToCache(tradePairList);
                 range.Value = cache;
                 workbook.Save();
             }
@@ -67,9 +67,9 @@ namespace PnLConverter.service
             }
         }
 
-        private double[,] writeTradeListToCache(List<TradePair> tradePairList)
+        private object[,] writeTradeListToCache(List<TradePair> tradePairList)
         {
-            double[,] data = new double[24, 25];
+            object[,] data = new object[24, 25];
             foreach (TradePair pair in tradePairList)
             {
                 if (pair.paired)
@@ -79,10 +79,12 @@ namespace PnLConverter.service
                     {
                         continue;
                     }
-                    data[index[market].currentRow, index[market].currentCol] = pair.buyTrade.shares;
+                    //Fill in valid shares into performance sheet. Valid shares are the amount that pairs buy and sell shares
+                    int validShares = Convert.ToInt32(Math.Min(pair.buyTrade.shares, pair.lendSellTrade.shares));
+                    data[index[market].currentRow, index[market].currentCol] = validShares;
                     data[index[market].currentRow, index[market].currentCol + 1] = Math.Round(pair.buyTrade.price,3);
                     data[index[market].currentRow, index[market].currentCol + 2] = Convert.ToSingle(pair.ticker);
-                    data[index[market].currentRow, index[market].currentCol + 3] = pair.lendSellTrade.shares;
+                    data[index[market].currentRow, index[market].currentCol + 3] = validShares;
                     data[index[market].currentRow, index[market].currentCol + 4] = Math.Round(pair.lendSellTrade.price,3);
                     Console.WriteLine("Write {2} to grid {0}{1}", index[market].currentCol, index[market].currentRow, pair.ticker);
                     index[market].moveToNext();

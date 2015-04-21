@@ -26,6 +26,10 @@ namespace PnLConverter.service
                     while ((line = reader.ReadLine()) != null)
                     {
                         String[] tokens = String.Copy(line).Split('\t');
+                        if (tokens.Length <= 1)
+                        {
+                            continue;
+                        }
                         string ticker = tokens[1];
                         TradePair pair = null;
                         if (!dict.ContainsKey(ticker))

@@ -15,15 +15,15 @@
             <RadioButton IsChecked="{Binding Path=selectedAccount, Converter={StaticResource converter}, ConverterParameter=HAITONG}">海通</RadioButton>
         </WrapPanel>
 
+        <Button Content="生成业绩单" 
+        Name="btnCreatePerfSheet"
+        FontSize="20" FontFamily="Times New Roman" Click="btnCreatePerfSheet_Click"
+         />
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="272*"/>
                 <RowDefinition Height="71*"/>
             </Grid.RowDefinitions>
-            <Button Content="生成业绩单" 
-        Name="btnCreatePerfSheet" Grid.Row="10"
-        FontSize="20" FontFamily="Times New Roman" Click="btnCreatePerfSheet_Click"
-         />
             <DataGrid Name="dgEmp" AutoGenerateColumns="False" ColumnWidth="*" ItemsSource="{Binding Path=tradePairList}"
            >
                 <DataGrid.Columns>

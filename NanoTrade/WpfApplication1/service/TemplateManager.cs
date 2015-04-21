@@ -14,7 +14,7 @@ namespace PnLConverter.service
 
     class TemplateManager
     {
-        private static readonly Dictionary<NLAccount, string> RESOURCES = new Dictionary<NLAccount, string> { { NLAccount.XIAOCHAJI, "templates/小茶几模板.xls" }, {NLAccount.HAITONG, "海通模板.xls"} };
+        private static readonly Dictionary<NLAccount, string> RESOURCES = new Dictionary<NLAccount, string> { { NLAccount.XIAOCHAJI, "templates/小茶几模板.xls" }, { NLAccount.HAITONG, "templates/海通模板.xls" } };
 
 
         public static string getTemplate(NLAccount account)

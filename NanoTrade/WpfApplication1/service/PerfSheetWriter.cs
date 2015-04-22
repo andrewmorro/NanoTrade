@@ -72,7 +72,7 @@ namespace PnLConverter.service
             object[,] data = new object[24, 25];
             foreach (TradePair pair in tradePairList)
             {
-                if (pair.paired)
+                if (pair.paired && pair.selected)
                 {
                     Market market = getMarketByTicker(pair);
                     if (!index[market].hasSpace)

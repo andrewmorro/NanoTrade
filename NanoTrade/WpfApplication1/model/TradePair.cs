@@ -11,6 +11,8 @@ namespace PnLConverter.model
         public string ticker { get; set; }
         public Trade buyTrade { get; set; }
         public Trade lendSellTrade { get; set; }
+        public bool selected { get; set; }
+
         public bool paired
         {
             get

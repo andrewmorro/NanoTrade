@@ -27,7 +27,7 @@
     <TargetCulture>en</TargetCulture>
     <ProductName>PnL Converter</ProductName>
     <PublisherName>Andrew Wu</PublisherName>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>0.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

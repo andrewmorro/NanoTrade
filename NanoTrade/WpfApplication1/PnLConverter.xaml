@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:converter="clr-namespace:PnLConverter.converter"
         xmlns:local="clr-namespace:PnLConverter"
-        Title="PnLConverter" Height="350" Width="525" Padding="5">
+        Title="业绩单生成器" Height="350" Width="525" Padding="5" >
     <Window.Resources>
         <converter:NLAccountConverter x:Key="converter" />
     </Window.Resources>
@@ -11,49 +11,82 @@
     <!--
     Layout tutorial:http://stackoverflow.com/questions/569095/how-to-get-stackpanels-children-to-fill-maximum-space-downward
     -->
-    <DockPanel>
-        <Grid DockPanel.Dock="Right" Margin="5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width= "Auto" />
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Label>交易员</Label>
-            <TextBox Grid.Column="1" Margin="4"></TextBox>
-            <Label Grid.Row="1" Grid.Column="0">账号</Label>
-            <WrapPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
-                <RadioButton IsChecked="{Binding Path=selectedAccount, Converter={StaticResource converter}, ConverterParameter=XIAOCHAJI}" >小茶几</RadioButton>
-                <RadioButton IsChecked="{Binding Path=selectedAccount, Converter={StaticResource converter}, ConverterParameter=HAITONG}">海通</RadioButton>
-            </WrapPanel>
-            <!--
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <DockPanel>
+            <Grid DockPanel.Dock="Right" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width= "Auto" />
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label>交易员</Label>
+                <TextBox Name="txtTraderName" Grid.Column="1" Margin="4" Text="{Binding Source={StaticResource Settings}, Path=Default.traderName}" ></TextBox>
+                <Label Grid.Row="1" Grid.Column="0">账号</Label>
+                <WrapPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+                    <RadioButton IsChecked="{Binding Path=selectedAccount, Converter={StaticResource converter}, ConverterParameter=XIAOCHAJI}" >小茶几</RadioButton>
+                    <RadioButton IsChecked="{Binding Path=selectedAccount, Converter={StaticResource converter}, ConverterParameter=HAITONG}">海通</RadioButton>
+                </WrapPanel>
+                <!--
             <TextBox Grid.Row="2" Grid.Column="1" Name="textFilePath" Text="{Binding Path=fileName,UpdateSourceTrigger=PropertyChanged}"></TextBox>
             -->
-            <Button Grid.Row="2" Grid.Column="1" Name="btnOpenFile" Click="btnOpenFile_Click">选择源文件</Button>
-            <Button Grid.Row="4" Grid.ColumnSpan="2" Content="生成业绩单" 
-        Name="btnCreatePerfSheet"
-        FontSize="20" FontFamily="Times New Roman" Click="btnCreatePerfSheet_Click"
-         />
-        </Grid>
-        <Grid DockPanel.Dock="Top">
-            <DataGrid Name="dgEmp" AutoGenerateColumns="False" ColumnWidth="*" ItemsSource="{Binding Path=tradePairList}">
-                <DataGrid.Columns>
-                    <DataGridCheckBoxColumn Binding="{Binding selected}" Width="auto"></DataGridCheckBoxColumn>
-                    <DataGridTextColumn Header="买入股数" Binding="{Binding buyTrade.shares}" Width="auto"></DataGridTextColumn>
-                    <DataGridTextColumn Header="买入价格" Binding="{Binding buyTrade.price, StringFormat={}{0:F3}}" Width="auto"></DataGridTextColumn>
-                    <DataGridTextColumn Header="代码" Binding="{Binding ticker}" Width="auto"></DataGridTextColumn>
-                    <DataGridTextColumn Header="卖出股数" Binding="{Binding lendSellTrade.shares}" Width="auto"></DataGridTextColumn>
-                    <DataGridTextColumn Header="卖出价格" Binding="{Binding lendSellTrade.price, StringFormat={}{0:F3}}" Width="auto"></DataGridTextColumn>
-                    <!--
+                <Button Grid.Row="2" Grid.Column="1" Name="btnOpenFile" Click="btnOpenFile_Click">选择源文件</Button>
+                <ProgressBar Grid.Row="4" Grid.ColumnSpan="2" Height="15" Minimum="0" Maximum="100" Value="{Binding Path=progress}" />
+                <Button Grid.Row="5" Grid.ColumnSpan="2" Content="生成业绩单" Name="btnCreatePerfSheet" FontSize="20" FontFamily="Times New Roman" Click="btnCreatePerfSheet_Click" />
+            </Grid>
+            <Grid DockPanel.Dock="Top">
+                <DataGrid Name="dgEmp" AutoGenerateColumns="False" ColumnWidth="*" ItemsSource="{Binding Path=tradePairList}">
+                    <DataGrid.Columns>
+                        <DataGridCheckBoxColumn Binding="{Binding selected}" Width="auto"></DataGridCheckBoxColumn>
+                        <DataGridTextColumn Header="买入股数" Binding="{Binding buyTrade.shares}" Width="auto"></DataGridTextColumn>
+                        <DataGridTextColumn Header="买入价格" Binding="{Binding buyTrade.price, StringFormat={}{0:F3}}" Width="auto"></DataGridTextColumn>
+                        <DataGridTextColumn Header="代码" Binding="{Binding ticker}" Width="auto"></DataGridTextColumn>
+                        <DataGridTextColumn Header="卖出股数" Binding="{Binding lendSellTrade.shares}" Width="auto"></DataGridTextColumn>
+                        <DataGridTextColumn Header="卖出价格" Binding="{Binding lendSellTrade.price, StringFormat={}{0:F3}}" Width="auto"></DataGridTextColumn>
+                        <!--
                     Computed binding:http://stackoverflow.com/questions/4996926/datagrid-calculate-difference-between-values-in-two-databound-cells
                     -->
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
-    </DockPanel>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+
+        </DockPanel>
+        <StatusBar Grid.Row="1" Height="25">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="100" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem>
+                <TextBlock Name="lblCursorPosition" Text="{Binding Path=status}"/>
+            </StatusBarItem>
+            <Separator Grid.Column="1" />
+            <StatusBarItem Grid.Column="2">
+                <TextBlock Text="{Binding Path=fileName}" />
+            </StatusBarItem>
+            <Separator Grid.Column="3" />
+            <StatusBarItem Grid.Column="4">
+                <ProgressBar Value="{Binding Path=progress}" Width="90" Height="16" />
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
 </Window>

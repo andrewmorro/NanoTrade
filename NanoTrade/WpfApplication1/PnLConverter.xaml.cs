@@ -18,6 +18,8 @@ using System.Windows.Shapes;
 
 using PnLConverter.model;
 using System.ComponentModel;
+using PnLConverter.Properties;
+using System.Collections.Specialized;
 
 namespace PnLConverter
 {
@@ -43,6 +45,7 @@ namespace PnLConverter
                 this.viewModel.fileName = openFileDialog.FileName;
                 IRawRecordExtractor extractor = new HaitongRawRecordExtractor();
                 this.viewModel.tradePairList = extractor.extractRawRecord(this.viewModel.fileName);
+                this.loadTickerSetting();
             }
         }
 
@@ -50,14 +53,17 @@ namespace PnLConverter
         {
             try
             {
+                this.viewModel.progress = 0;
+                this.saveTickerSetting();
                 SaveFileDialog dlg = new SaveFileDialog();
-                dlg.FileName = "Document"; // Default file name
+                dlg.FileName = this.viewModel.selectedAccount + DateTime.Today.ToString("yyyy-MM-dd") + txtTraderName.Text; // Default file name
                 dlg.DefaultExt = ".xls"; // Default file extension
                 dlg.Filter = "Spreadsheets (.xls)|*.xls"; // Filter files by extension
 
                 // Show save file dialog box
                 Nullable<bool> result = dlg.ShowDialog();
 
+                this.viewModel.progress = 30;
                 // Process save file dialog box results
                 if (result == true)
                 {
@@ -65,7 +71,8 @@ namespace PnLConverter
                     string outputFile = dlg.FileName;
                     PerfSheetWriter writer = new PerfSheetWriter(TemplateManager.getTemplate(this.viewModel.selectedAccount));
                     writer.writePerf(this.viewModel.tradePairList, outputFile);
-                    MessageBox.Show("Done!");
+                    this.viewModel.progress = 100;
+                    //MessageBox.Show("Done!");
                 }
 
 
@@ -73,6 +80,38 @@ namespace PnLConverter
             catch (IOException ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void loadTickerSetting()
+        {
+            StringCollection selectedTickers = (StringCollection)Settings.Default["selectedTickers"];
+            if (null != selectedTickers)
+            {
+                foreach (TradePair pair in this.viewModel.tradePairList)
+                {
+                    if (selectedTickers.Contains(pair.ticker))
+                    {
+                        pair.selected = true;
+                    }
+                }
+            }
+        }
+
+        private void saveTickerSetting()
+        {
+            if (null != this.viewModel.tradePairList)
+            {
+
+                StringCollection selectedTickers = new StringCollection();
+                foreach (TradePair pair in this.viewModel.tradePairList)
+                {
+                    if (pair.selected)
+                    {
+                        selectedTickers.Add(pair.ticker);
+                    }
+                }
+                Settings.Default["selectedTickers"] = selectedTickers;
             }
         }
 
@@ -86,8 +125,37 @@ namespace PnLConverter
         private string _fileName = "";
         private List<TradePair> _tradePairList = null;
         private NLAccount _selectedAccount = NLAccount.UNKNOWN;
+        private int _progress = 0;
+        private string _status = "";
 
         public PnLConverterViewModel() { }
+
+        public string status
+        {
+            get
+            {
+                return this._status;
+            }
+            set
+            {
+                this._status = value;
+                OnPropertyChanged("status");
+            }
+        }
+
+
+        public int progress
+        {
+            get
+            {
+                return this._progress;
+            }
+            set
+            {
+                this._progress = value;
+                OnPropertyChanged("progress");
+            }
+        }
 
         public string fileName
         {

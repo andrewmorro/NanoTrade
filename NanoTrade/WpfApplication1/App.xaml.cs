@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PnLConverter.Properties;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,9 @@ namespace PnLConverter
     /// </summary>
     public partial class App : Application
     {
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            Settings.Default.Save();
+        }
     }
 }

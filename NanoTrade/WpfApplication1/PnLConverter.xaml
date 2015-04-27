@@ -11,12 +11,20 @@
     <!--
     Layout tutorial:http://stackoverflow.com/questions/569095/how-to-get-stackpanels-children-to-fill-maximum-space-downward
     -->
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="选项">
+                    <MenuItem Name="settingMenuItem" Header="账户设置" Click="settingMenuItem_Click" />
+                    <Separator />
+                    <MenuItem Header="退出" />
+                </MenuItem>
+            </Menu>
             <Grid DockPanel.Dock="Right" Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width= "Auto" />
@@ -34,14 +42,13 @@
                 <TextBox Name="txtTraderName" Grid.Column="1" Margin="4" Text="{Binding Source={StaticResource Settings}, Path=Default.traderName}" ></TextBox>
                 <Label Grid.Row="1" Grid.Column="0">账号</Label>
                 <WrapPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
-                    <RadioButton IsChecked="{Binding Path=selectedAccount, Converter={StaticResource converter}, ConverterParameter=XIAOCHAJI}" >小茶几</RadioButton>
-                    <RadioButton IsChecked="{Binding Path=selectedAccount, Converter={StaticResource converter}, ConverterParameter=HAITONG}">海通</RadioButton>
+                    <RadioButton IsChecked="{Binding Path=selectedAccount, Converter={StaticResource converter}, ConverterParameter=XIAOCHAJI}" Checked="RadioButton_Checked" >小茶几</RadioButton>
+                    <RadioButton IsChecked="{Binding Path=selectedAccount, Converter={StaticResource converter}, ConverterParameter=HAITONG}" Checked="RadioButton_Checked">海通</RadioButton>
                 </WrapPanel>
                 <!--
             <TextBox Grid.Row="2" Grid.Column="1" Name="textFilePath" Text="{Binding Path=fileName,UpdateSourceTrigger=PropertyChanged}"></TextBox>
             -->
                 <Button Grid.Row="2" Grid.Column="1" Name="btnOpenFile" Click="btnOpenFile_Click">选择源文件</Button>
-                <ProgressBar Grid.Row="4" Grid.ColumnSpan="2" Height="15" Minimum="0" Maximum="100" Value="{Binding Path=progress}" />
                 <Button Grid.Row="5" Grid.ColumnSpan="2" Content="生成业绩单" Name="btnCreatePerfSheet" FontSize="20" FontFamily="Times New Roman" Click="btnCreatePerfSheet_Click" />
             </Grid>
             <Grid DockPanel.Dock="Top">

@@ -27,7 +27,7 @@
     <TargetCulture>en</TargetCulture>
     <ProductName>PnL Converter</ProductName>
     <PublisherName>Andrew Wu</PublisherName>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>0.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -94,6 +94,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="component\SettingPopup.xaml.cs">
+      <DependentUpon>SettingPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="usercontrol\StockTextBox.cs" />
     <Compile Include="converter\NLAccountConverter.cs" />
     <Compile Include="model\Market.cs" />
     <Compile Include="model\NLAccount.cs" />
@@ -102,6 +106,10 @@
     <Compile Include="service\HaitongRawRecordExtractor.cs" />
     <Compile Include="service\IRawRecordExtractor.cs" />
     <Compile Include="service\PerfSheetWriter.cs" />
+    <Page Include="component\SettingPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PnLConverter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

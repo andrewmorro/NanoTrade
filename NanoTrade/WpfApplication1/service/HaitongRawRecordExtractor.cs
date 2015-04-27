@@ -15,47 +15,54 @@ namespace PnLConverter.service
 
         public List<TradePair> extractRawRecord(string filePath)
         {
-            using (FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            try
             {
-                Dictionary<String, TradePair> dict = new Dictionary<string, TradePair>();
-
-                using (StreamReader reader = new StreamReader(file, Encoding.GetEncoding("gb2312")))
+                using (FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 {
-                    // skip the first header line
-                    string line = reader.ReadLine();
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        String[] tokens = String.Copy(line).Split('\t');
-                        if (tokens.Length <= 1)
-                        {
-                            continue;
-                        }
-                        string ticker = tokens[1];
-                        TradePair pair = null;
-                        if (!dict.ContainsKey(ticker))
-                        {
-                            pair = new TradePair();
-                            pair.ticker = ticker;
-                            dict[ticker] = pair;
-                        }
-                        pair = dict[ticker];
+                    Dictionary<String, TradePair> dict = new Dictionary<string, TradePair>();
 
-                        Trade trade = new Trade(ticker, Convert.ToInt32(tokens[4]), Convert.ToSingle(tokens[5]), TradeType.UNKNOWN);
-                        if (BUY_FLAG.Equals(tokens[3]))
+                    using (StreamReader reader = new StreamReader(file, Encoding.GetEncoding("gb2312")))
+                    {
+                        // skip the first header line
+                        string line = reader.ReadLine();
+                        while ((line = reader.ReadLine()) != null)
                         {
-                            trade.type = TradeType.BUY;
-                            pair.buyTrade = trade;
+                            String[] tokens = String.Copy(line).Split('\t');
+                            if (tokens.Length <= 1)
+                            {
+                                continue;
+                            }
+                            string ticker = tokens[1];
+                            TradePair pair = null;
+                            if (!dict.ContainsKey(ticker))
+                            {
+                                pair = new TradePair();
+                                pair.ticker = ticker;
+                                dict[ticker] = pair;
+                            }
+                            pair = dict[ticker];
+
+                            Trade trade = new Trade(ticker, Convert.ToInt32(tokens[4]), Convert.ToSingle(tokens[5]), TradeType.UNKNOWN);
+                            if (BUY_FLAG.Equals(tokens[3]))
+                            {
+                                trade.type = TradeType.BUY;
+                                pair.buyTrade = trade;
+                            }
+                            else if (LENDSELL_FLAG.Equals(tokens[10]))
+                            {
+                                trade.type = TradeType.LENDSELL;
+                                pair.lendSellTrade = trade;
+                            }
                         }
-                        else if (LENDSELL_FLAG.Equals(tokens[10]))
-                        {
-                            trade.type = TradeType.LENDSELL;
-                            pair.lendSellTrade = trade;
-                        }
+                        reader.Close();
                     }
-                    reader.Close();
+                    file.Close();
+                    return dict.Values.ToList();
                 }
-                file.Close();
-                return dict.Values.ToList();
+            }
+            catch (Exception e)
+            {
+                return null;
             }
         }
     }

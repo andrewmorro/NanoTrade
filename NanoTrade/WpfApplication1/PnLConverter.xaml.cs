@@ -20,6 +20,7 @@ using PnLConverter.model;
 using System.ComponentModel;
 using PnLConverter.Properties;
 using System.Collections.Specialized;
+using PnLConverter.component;
 
 namespace PnLConverter
 {
@@ -34,7 +35,7 @@ namespace PnLConverter
             //base.InitializeComponent();
             this.viewModel = new PnLConverterViewModel();
             this.DataContext = this.viewModel;
-            this.viewModel.selectedAccount = NLAccount.HAITONG;
+            this.viewModel.selectedAccount = NLAccount.XIAOCHAJI;
         }
 
         private void btnOpenFile_Click(object sender, RoutedEventArgs e)
@@ -45,8 +46,14 @@ namespace PnLConverter
                 this.viewModel.fileName = openFileDialog.FileName;
                 IRawRecordExtractor extractor = new HaitongRawRecordExtractor();
                 this.viewModel.tradePairList = extractor.extractRawRecord(this.viewModel.fileName);
-                this.loadTickerSetting();
+                this.loadTickerSetting(this.viewModel.selectedAccount);
             }
+        }
+
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            this.loadTickerSetting(this.viewModel.selectedAccount);
         }
 
         private void btnCreatePerfSheet_Click(object sender, RoutedEventArgs e)
@@ -54,7 +61,7 @@ namespace PnLConverter
             try
             {
                 this.viewModel.progress = 0;
-                this.saveTickerSetting();
+                this.saveTickerSetting(this.viewModel.selectedAccount);
                 SaveFileDialog dlg = new SaveFileDialog();
                 dlg.FileName = this.viewModel.selectedAccount + DateTime.Today.ToString("yyyy-MM-dd") + txtTraderName.Text; // Default file name
                 dlg.DefaultExt = ".xls"; // Default file extension
@@ -72,6 +79,7 @@ namespace PnLConverter
                     PerfSheetWriter writer = new PerfSheetWriter(TemplateManager.getTemplate(this.viewModel.selectedAccount));
                     writer.writePerf(this.viewModel.tradePairList, outputFile);
                     this.viewModel.progress = 100;
+                    this.viewModel.status = "生成完毕";
                     //MessageBox.Show("Done!");
                 }
 
@@ -83,10 +91,10 @@ namespace PnLConverter
             }
         }
 
-        private void loadTickerSetting()
+        private void loadTickerSetting(NLAccount account)
         {
-            StringCollection selectedTickers = (StringCollection)Settings.Default["selectedTickers"];
-            if (null != selectedTickers)
+            StringCollection selectedTickers = (StringCollection)Settings.Default["selectedTickers_" + account];
+            if (null != selectedTickers && null!=this.viewModel.tradePairList)
             {
                 foreach (TradePair pair in this.viewModel.tradePairList)
                 {
@@ -94,11 +102,15 @@ namespace PnLConverter
                     {
                         pair.selected = true;
                     }
+                    else
+                    {
+                        pair.selected = false;
+                    }
                 }
             }
         }
 
-        private void saveTickerSetting()
+        private void saveTickerSetting(NLAccount account)
         {
             if (null != this.viewModel.tradePairList)
             {
@@ -111,11 +123,17 @@ namespace PnLConverter
                         selectedTickers.Add(pair.ticker);
                     }
                 }
-                Settings.Default["selectedTickers"] = selectedTickers;
+                Settings.Default["selectedTickers_"+account] = selectedTickers;
             }
         }
 
         public PnLConverterViewModel viewModel { get; set; }
+
+        private void settingMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SettingPopup setting = new SettingPopup();
+            setting.ShowDialog();
+        }
 
 
     }

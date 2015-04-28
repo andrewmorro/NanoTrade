@@ -4,13 +4,18 @@
         xmlns:control="clr-namespace:PnLConverter.usercontrol"
         Title="Settings" Height="300" Width="300">
     <Grid>
-        <TabControl>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TabControl Grid.Row="0">
             <TabItem Header="海通">
-                <control:StockTextBox SettingName="selectedTickers_HAITONG"></control:StockTextBox>
+                <control:StockTextBox x:Name="stockBox_HAITONG"></control:StockTextBox>
             </TabItem>
             <TabItem Header="小茶几" >
-                <control:StockTextBox SettingName="selectedTickers_HAITONG"></control:StockTextBox>
+                <control:StockTextBox x:Name="stockBox_XIAOCHAJI"></control:StockTextBox>
             </TabItem>
         </TabControl>
+        <Button Grid.Row="1" Margin="5" Width="50" Content="保存" Click="Button_Click"></Button>
     </Grid>
 </Window>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PnLConverter.usercontrol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,14 @@ namespace PnLConverter.component
         public SettingPopup()
         {
             InitializeComponent();
+            this.stockBox_HAITONG.SettingName = "selectedTickers_HAITONG";
+            this.stockBox_XIAOCHAJI.SettingName = "selectedTickers_XIAOCHAJI";
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.stockBox_HAITONG.saveStockListToSetting();
+            this.stockBox_XIAOCHAJI.saveStockListToSetting();
         }
     }
 }

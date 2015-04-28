@@ -19,11 +19,24 @@ namespace PnLConverter.usercontrol
             SettingNameProperty = DependencyProperty.Register("SettingName", typeof(string), typeof(StockTextBox));
         }
 
+        public StockTextBox()
+        {
+            this.AcceptsReturn = true;
+        }
+
         public void saveStockListToSetting()
         {
             StringCollection selectedTickers = new StringCollection();
             string[] tickers = this.Text.Split('\n');
-            selectedTickers.AddRange(tickers);
+            List<string> result = new List<string>();
+            foreach (string ticker in tickers)
+            {
+                if (null != ticker && !"".Equals(ticker))
+                {
+                    result.Add(ticker.Trim());
+                }
+            }
+            selectedTickers.AddRange(result.ToArray());
             Settings.Default[SettingName] = selectedTickers;
         }
 
@@ -39,7 +52,14 @@ namespace PnLConverter.usercontrol
                 StringCollection selectedTickers = (StringCollection)Settings.Default[value];
                 string[] list = new string[selectedTickers.Count];
                 selectedTickers.CopyTo(list, 0);
-                this.Text = list.Aggregate((current, next) => current + ", " + next);
+                if (list.Length >= 2)
+                {
+                    this.Text = list.Aggregate((current, next) => current + "\n" + next);
+                }
+                else if (list.Length == 1)
+                {
+                    this.Text = list[0];
+                }
             }
         }
     }

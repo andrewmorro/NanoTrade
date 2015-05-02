@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:control="clr-namespace:PnLConverter.usercontrol"
-        Title="Settings" Height="300" Width="300">
+        Title="设置" Height="300" Width="300">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

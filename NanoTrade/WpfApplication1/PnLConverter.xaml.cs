@@ -61,7 +61,6 @@ namespace PnLConverter
             try
             {
                 this.viewModel.progress = 0;
-                this.saveTickerSetting(this.viewModel.selectedAccount);
                 SaveFileDialog dlg = new SaveFileDialog();
                 dlg.FileName = this.viewModel.selectedAccount + DateTime.Today.ToString("yyyy-MM-dd") + txtTraderName.Text; // Default file name
                 dlg.DefaultExt = ".xls"; // Default file extension
@@ -107,23 +106,6 @@ namespace PnLConverter
                         pair.selected = false;
                     }
                 }
-            }
-        }
-
-        private void saveTickerSetting(NLAccount account)
-        {
-            if (null != this.viewModel.tradePairList)
-            {
-
-                StringCollection selectedTickers = new StringCollection();
-                foreach (TradePair pair in this.viewModel.tradePairList)
-                {
-                    if (pair.selected)
-                    {
-                        selectedTickers.Add(pair.ticker);
-                    }
-                }
-                Settings.Default["selectedTickers_"+account] = selectedTickers;
             }
         }
 

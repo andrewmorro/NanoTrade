@@ -22,6 +22,8 @@ namespace PnLConverter.usercontrol
         public StockTextBox()
         {
             this.AcceptsReturn = true;
+            this.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            this.TextWrapping = TextWrapping.Wrap;
         }
 
         public void saveStockListToSetting()

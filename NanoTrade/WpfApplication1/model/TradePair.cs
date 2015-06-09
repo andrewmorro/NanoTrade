@@ -13,6 +13,13 @@ namespace PnLConverter.model
         public Trade lendSellTrade { get; set; }
         public bool selected { get; set; }
 
+        public TradePair()
+        {
+            this.buyTrade = new Trade();
+            this.lendSellTrade = new Trade();
+            this.selected = false;
+        }
+
         public bool paired
         {
             get
@@ -22,6 +29,14 @@ namespace PnLConverter.model
                     return true;
                 }
                 return false;
+            }
+        }
+
+        public int position
+        {
+            get
+            {
+                return this.buyTrade.shares - this.lendSellTrade.shares;
             }
         }
 

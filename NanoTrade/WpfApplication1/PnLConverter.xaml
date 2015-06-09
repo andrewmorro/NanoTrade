@@ -57,9 +57,10 @@
                         <DataGridCheckBoxColumn Binding="{Binding selected}" Width="auto"></DataGridCheckBoxColumn>
                         <DataGridTextColumn Header="买入股数" Binding="{Binding buyTrade.shares}" Width="auto"></DataGridTextColumn>
                         <DataGridTextColumn Header="买入价格" Binding="{Binding buyTrade.price, StringFormat={}{0:F3}}" Width="auto"></DataGridTextColumn>
-                        <DataGridTextColumn Header="代码" Binding="{Binding ticker}" Width="auto"></DataGridTextColumn>
+                        <DataGridTextColumn Header="代码" Binding="{Binding ticker}" FontWeight="Bold" Width="auto"></DataGridTextColumn>
                         <DataGridTextColumn Header="卖出股数" Binding="{Binding lendSellTrade.shares}" Width="auto"></DataGridTextColumn>
                         <DataGridTextColumn Header="卖出价格" Binding="{Binding lendSellTrade.price, StringFormat={}{0:F3}}" Width="auto"></DataGridTextColumn>
+                        <DataGridTextColumn Header="持仓" Binding="{Binding position}" Width="auto"></DataGridTextColumn>
                         <!--
                     Computed binding:http://stackoverflow.com/questions/4996926/datagrid-calculate-difference-between-values-in-two-databound-cells
                     -->

@@ -14,7 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using PnLConverter.model;
 using System.ComponentModel;
@@ -44,10 +43,32 @@ namespace PnLConverter
             if (openFileDialog.ShowDialog() == true)
             {
                 this.viewModel.fileName = openFileDialog.FileName;
-                IRawRecordExtractor extractor = new HaitongRawRecordExtractor();
-                this.viewModel.tradePairList = extractor.extractRawRecord(this.viewModel.fileName);
-                this.loadTickerSetting(this.viewModel.selectedAccount);
+                this.watchFile(this.viewModel.fileName);
+                this.extractData();
             }
+        }
+
+        private void extractData()
+        {
+            IRawRecordExtractor extractor = new HaitongRawRecordExtractor();
+            this.viewModel.tradePairList = extractor.extractRawRecord(this.viewModel.fileName);
+            this.loadTickerSetting(this.viewModel.selectedAccount);
+        }
+
+        private void watchFile(String filename)
+        {
+            FileSystemWatcher watcher = new FileSystemWatcher();
+            watcher.Path = Path.GetDirectoryName(filename);
+            watcher.Filter = Path.GetFileName(filename);
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
+            watcher.EnableRaisingEvents = true;
+            watcher.Changed += watcher_Changed;
+        }
+
+        private void watcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            this.viewModel.status = ""+DateTime.Now;
+            this.extractData();
         }
 
 

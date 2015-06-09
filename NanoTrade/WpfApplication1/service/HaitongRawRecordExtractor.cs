@@ -17,7 +17,8 @@ namespace PnLConverter.service
         {
             try
             {
-                using (FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                //use FileReader class with option FileAccess = Read and Share = System.IO.FileShare.ReadWrite to prevent locking the file and deal with file changes.
+                using (FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     Dictionary<String, TradePair> dict = new Dictionary<string, TradePair>();
 
@@ -62,6 +63,7 @@ namespace PnLConverter.service
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.StackTrace);
                 return null;
             }
         }
